@@ -1,0 +1,51 @@
+version: '4.26.0'
+
+networks:
+  backend:
+  frontend:
+  common_net:
+
+services:
+  postgresdb:
+    image: "postgres:latest"
+    env_file:
+      - .db_env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d netology_stocks_products" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - backend
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+  web:
+    build: .
+    command: python /usr/src/app/manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      - postgresdb
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@yandex.ru
+      - PGADMIN_DEFAULT_PASSWORD=adminpwd
+      - PGADMIN_DEFAULT_SERVER_MODE=False
+    networks:
+      - backend
+    ports:
+      - "5050:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+volumes:
+  pgdata:
