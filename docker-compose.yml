@@ -35,21 +35,21 @@ services:
       - backend
     volumes:
       - pgdata:/var/lib/postgresql/data
-#  pgadmin:
-#    image: dpage/pgadmin4:latest
-#    environment:
-#      - PGADMIN_DEFAULT_EMAIL=admin@yandex.ru
-#      - PGADMIN_DEFAULT_PASSWORD=adminpwd
-#      - PGADMIN_DEFAULT_SERVER_MODE=False
-#    networks:
-#      - backend
-#    ports:
-#      - 5050:80
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.5'
-#          memory: 1G
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@yandex.ru
+      - PGADMIN_DEFAULT_PASSWORD=adminpwd
+      - PGADMIN_DEFAULT_SERVER_MODE=False
+    networks:
+      - backend
+    ports:
+      - 5050:80
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
   nginx:
     build: ./nginx
     volumes:
