@@ -10,9 +10,9 @@ services:
     build: .
     command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - static_volume:/web/static
-    expose:
-      - "8000"
+      - static_volume:/home/web/staticfiles
+    ports:
+      - 8000:80
     env_file:
       - ./.env
     networks:
@@ -35,31 +35,30 @@ services:
       - backend
     volumes:
       - pgdata:/var/lib/postgresql/data
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@yandex.ru
-      - PGADMIN_DEFAULT_PASSWORD=adminpwd
-      - PGADMIN_DEFAULT_SERVER_MODE=False
-    networks:
-      - backend
-    ports:
-      - "5050:80"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
+#  pgadmin:
+#    image: dpage/pgadmin4:latest
+#    environment:
+#      - PGADMIN_DEFAULT_EMAIL=admin@yandex.ru
+#      - PGADMIN_DEFAULT_PASSWORD=adminpwd
+#      - PGADMIN_DEFAULT_SERVER_MODE=False
+#    networks:
+#      - backend
+#    ports:
+#      - 5050:80
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 1G
   nginx:
     build: ./nginx
     volumes:
-      - static_volume:/web/static
+      - static_volume:/home/web/staticfiles
     ports:
-      - "6060:80"
+      - 80:80
     depends_on:
       - web
     networks:
-      - backend
       - frontend
 volumes:
   pgdata:
